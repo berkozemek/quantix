@@ -4,7 +4,7 @@ import numpy as np
 import yfinance as yf
 import matplotlib.pyplot as plt
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 # Sayfa Yapılandırması
 st.set_page_config(layout="wide")
@@ -245,7 +245,7 @@ with tab2:
                 st.session_state.live_portfolio["buy_orders"] = {g: True for g in grids if g < current_p}
                 st.session_state.live_portfolio["sell_orders"] = {g: True for g in grids if g > current_p}
                 st.session_state.live_portfolio["step_size"] = grids[1] - grids[0]
-                st.session_state.live_logs = [{"Zaman": datetime.now().strftime('%H:%M:%S'), "Olay": "Bot Başlatıldı", "Fiyat": current_p}]
+                st.session_state.live_logs = [{"Zaman": datetime.now(timezone(timedelta(hours=3))).strftime('%H:%M:%S'), "Olay": "Bot Başlatıldı", "Fiyat": current_p}]
             else:
                 st.error("Canlı fiyat çekilemedi. Piyasa kapalı veya kod hatalı olabilir.")
                 
@@ -271,7 +271,7 @@ with tab2:
                         p["buy_orders"][g] = False
                         if g + step <= p["p_max"]:
                             p["sell_orders"][g + step] = True
-                        st.session_state.live_logs.append({"Zaman": datetime.now().strftime('%H:%M:%S'), "Olay": f"🛒 CANLI ALIM YAPILDI ({qty:.2f} Adet)", "Fiyat": g})
+                        st.session_state.live_logs.append({"Zaman": datetime.now(timezone(timedelta(hours=3))).strftime('%H:%M:%S'), "Olay": f"🛒 CANLI ALIM YAPILDI ({qty:.2f} Adet)", "Fiyat": g})
             
             for g in list(p["sell_orders"].keys()):
                 if p["sell_orders"][g] and current_p >= g:
@@ -281,7 +281,7 @@ with tab2:
                         p["sell_orders"][g] = False
                         if g - step >= p["p_min"]:
                             p["buy_orders"][g - step] = True
-                        st.session_state.live_logs.append({"Zaman": datetime.now().strftime('%H:%M:%S'), "Olay": f"💰 CANLI SATIM YAPILDI ({qty:.2f} Adet)", "Fiyat": g})
+                        st.session_state.live_logs.append({"Zaman": datetime.now(timezone(timedelta(hours=3))).strftime('%H:%M:%S'), "Olay": f"💰 CANLI SATIM YAPILDI ({qty:.2f} Adet)", "Fiyat": g})
             
             current_total_value = p["cash"] + (p["asset_qty"] * current_p)
             net_profit_loss = current_total_value - sermaye
@@ -321,7 +321,7 @@ with tab3:
         progress_bar = st.progress(0)
         durum_yazisi = st.empty()
         
-        bitis_tarihi = datetime.now()
+        bitis_tarihi = datetime.now(timezone(timedelta(hours=3)))
         baslangic_tarihi = bitis_tarihi - timedelta(days=45)
         
         for idx, s in enumerate(bist_sepeti):
